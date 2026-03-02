@@ -85,32 +85,32 @@ Read `references/prompt-enhancement.md` for the full enhancement engine. Apply i
 
 ### Step 3 — Submit to the API
 
-Read `references/api-reference.md` for full details. The model uses `generateContent` — **not** the Imagen `predict` endpoint.
+Use the **Python SDK** via the `generate_image.py` script provided with this skill.
 
-```json
-{
-  "contents": [{
-    "role": "user",
-    "parts": [{ "text": "ENHANCED_PROMPT. Generate as a 1:1 square image." }]
-  }],
-  "generationConfig": {
-    "responseModalities": ["TEXT", "IMAGE"]
-  }
-}
+**Quick call:**
+Locate the script `generate_image.py`. If this skill is installed globally (e.g. in `~/.agent/skills/`), the script is located at `~/.agent/scripts/generate_image.py` or similar. Always use the **absolute path** to the script when invoking from your workspace:
+
+```bash
+python "C:\Users\VISHWA\.agent\scripts\generate_image.py" "ENHANCED_PROMPT" "RAW_USER_INPUT" "Fantasy Art" "1:1" "1K"
 ```
 
-**Endpoint:**
-```
-POST https://aiplatform.googleapis.com/v1/projects/{PROJECT}/locations/global/publishers/google/models/gemini-3.1-flash-image-generation:generateContent
-```
+*(Note: The script outputs to `output/images/` and `output/prompts/` relative to your **current working directory**, which is exactly what we want).*
+
+The script uses `google-genai` SDK with:
+- `vertexai=True`, `project=GOOGLE_CLOUD_PROJECT`, `location=global`
+- `ThinkingConfig(thinking_level="HIGH")` — model reasons before drawing
+- `ImageConfig(aspect_ratio=...`
+
+Supported sizes: `1K`, `2K`, `4K`
+Supported ratios: `1:1`, `3:4`, `4:3`, `9:16`, `16:9`, `auto`
 
 ---
 
 ### Step 4 — Extract, Decode, and Save
 
-The image is inside `candidates[0].content.parts` — iterate all parts and find ones with `inlineData`. There may also be `text` parts (captions/descriptions from the model) — show those to the user too.
+This step is completely handled automatically by the `generate_image.py` script. The script decodes the stream and automatically persists outputs relative to your workspace root.
 
-**Always save outputs to the `output/` folder of the current project:**
+Ensure outputs are verified in the `output/` folder:
 
 ```
 output/
@@ -120,40 +120,7 @@ output/
     └── prompt_{timestamp}_{index}.json
 ```
 
-**PowerShell extraction pattern:**
-```powershell
-$timestamp = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
-New-Item -ItemType Directory -Force -Path "output\images" | Out-Null
-New-Item -ItemType Directory -Force -Path "output\prompts" | Out-Null
-
-$i = 1
-foreach ($part in $response.candidates[0].content.parts) {
-    if ($part.inlineData) {
-        $bytes = [Convert]::FromBase64String($part.inlineData.data)
-        $imgFile = "output\images\generated_image_${timestamp}_${i}.png"
-        [IO.File]::WriteAllBytes((Join-Path (Get-Location) $imgFile), $bytes)
-
-        $meta = @{
-            id             = "${timestamp}_${i}"
-            timestamp_utc  = [DateTimeOffset]::UtcNow.ToString("o")
-            model          = "gemini-3.1-flash-image-generation"
-            skill          = "image-generation"
-            style          = $Style
-            aspect_ratio   = $AspectRatio
-            raw_user_input = $RawPrompt
-            enhanced_prompt = $EnhancedPrompt
-            output_file    = $imgFile
-        }
-        $meta | ConvertTo-Json -Depth 4 | Out-File "output\prompts\prompt_${timestamp}_${i}.json" -Encoding utf8
-
-        Write-Host "✅ Image : $imgFile"
-        Write-Host "✅ Prompt: output\prompts\prompt_${timestamp}_${i}.json"
-        $i++
-    } elseif ($part.text) {
-        Write-Host "Model says: $($part.text)"
-    }
-}
-```
+Read the standard output from the Python script to see exactly where the files were saved so you can deliver those paths to the user.
 
 ---
 
