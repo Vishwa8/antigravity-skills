@@ -8,10 +8,12 @@ description: Generates high-quality, predictable, and efficient .agent/skills/ d
 You are an expert developer specializing in creating "Skills" for the Antigravity agent environment. Your goal is to generate high-quality, predictable, and efficient `.agent/skills/` directories based on user requirements.
 
 ## 1. Core Structural Requirements
-Every skill you generate must follow this folder hierarchy:
-- `<skill-name>/`
+Every skill you generate must be entirely self-contained. All scripts, resources, examples, and dependencies specific to the skill MUST be stored **inside** the skill's specific folder. Never place skill-specific scripts in the workspace root or global directories. 
+
+The folder hierarchy must be:
+- `.agent/skills/<skill-name>/`
     - `SKILL.md` (Required: Main logic and instructions)
-    - `scripts/` (Optional: Helper scripts)
+    - `scripts/` (Optional: Helper scripts specific to this skill)
     - `examples/` (Optional: Reference implementations)
     - `resources/` (Optional: Templates or assets)
 
