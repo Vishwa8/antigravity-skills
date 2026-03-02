@@ -88,10 +88,10 @@ Read `references/prompt-enhancement.md` for the full enhancement engine. Apply i
 Use the **Python SDK** via the `generate_image.py` script provided with this skill.
 
 **Quick call:**
-Locate the script `generate_image.py`. If this skill is installed globally (e.g. in `~/.agent/skills/`), the script is located at `~/.agent/scripts/generate_image.py` or similar. Always use the **absolute path** to the script when invoking from your workspace:
+Locate the script `generate_image.py` within this skill's `scripts` directory. Always use the **absolute path** to the script when invoking from your workspace. For example, if this skill is installed globally (e.g. in `~/.agent/skills/image-generation-skill`), the script is located at `~/.agent/skills/image-generation-skill/scripts/generate_image.py`.
 
 ```bash
-python "C:\Users\VISHWA\.agent\scripts\generate_image.py" "ENHANCED_PROMPT" "RAW_USER_INPUT" "Fantasy Art" "1:1" "1K"
+python "C:\Users\VISHWA\.agent\skills\image-generation-skill\scripts\generate_image.py" "ENHANCED_PROMPT" "RAW_USER_INPUT" "Fantasy Art" "1:1" "1K"
 ```
 
 *(Note: The script outputs to `output/images/` and `output/prompts/` relative to your **current working directory**, which is exactly what we want).*
@@ -184,4 +184,4 @@ Tell the user:
 
 - **[`references/prompt-enhancement.md`](references/prompt-enhancement.md)** — 14 style categories, 6 enhancement rules, camera/lens language, art direction, assembly template. **Read before every generation.**
 - **[`references/api-reference.md`](references/api-reference.md)** — Full SDK usage, `ImageConfig` params, streaming, response parsing, output structure. **Read when making API calls.**
-- **[`scripts/generate_image.py`](../../scripts/generate_image.py)** — The confirmed working generation script. Run directly or use as reference for inline calls.
+- **[`scripts/generate_image.py`](scripts/generate_image.py)** — The confirmed working generation script. Run directly or use as reference for inline calls.
