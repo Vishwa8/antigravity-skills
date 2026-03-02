@@ -9,6 +9,7 @@ import json
 import os
 import sys
 import time
+import mimetypes
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -28,6 +29,7 @@ raw_input    = sys.argv[2] if len(sys.argv) > 2 else prompt_text
 style        = sys.argv[3] if len(sys.argv) > 3 else "Fantasy Art"
 aspect_ratio = sys.argv[4] if len(sys.argv) > 4 else "1:1"
 image_size   = sys.argv[5] if len(sys.argv) > 5 else "1K"
+reference_images = sys.argv[6:] if len(sys.argv) > 6 else []
 
 # ─── Output dirs ──────────────────────────────────────────────────────────────
 
@@ -69,10 +71,23 @@ config = types.GenerateContentConfig(
     ),
 )
 
+parts_list = []
+for ref_img in reference_images:
+    if os.path.exists(ref_img):
+        mime_type, _ = mimetypes.guess_type(ref_img)
+        if not mime_type:
+            mime_type = "image/jpeg"
+        with open(ref_img, "rb") as f:
+            img_bytes = f.read()
+        parts_list.append(types.Part.from_bytes(data=img_bytes, mime_type=mime_type))
+        print(f"🖼️  Loaded reference image: {ref_img}")
+
+parts_list.append(types.Part.from_text(text=prompt_text))
+
 contents = [
     types.Content(
         role="user",
-        parts=[types.Part.from_text(text=prompt_text)],
+        parts=parts_list,
     )
 ]
 

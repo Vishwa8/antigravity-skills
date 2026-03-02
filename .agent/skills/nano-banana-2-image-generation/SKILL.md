@@ -52,7 +52,7 @@ Extract from the user's message. Fill in sensible defaults rather than asking:
 | Style | No | Photorealistic |
 | Aspect ratio | No | `1:1` |
 | Number of images | No | `1` |
-| Reference image URL/path | No | None |
+| Reference images | No | None (Can accept up to 14 absolute paths) |
 | Special instructions | No | None |
 
 **Auto-detect style and ratio from common phrases:**
@@ -88,10 +88,14 @@ Read `references/prompt-enhancement.md` for the full enhancement engine. Apply i
 Use the **Python SDK** via the `generate_image.py` script provided with this skill.
 
 **Quick call:**
-Locate the script `generate_image.py` within this skill's `scripts` directory. Always use the **absolute path** to the script when invoking from your workspace. For example, if this skill is installed globally (e.g. in `~/.agent/skills/image-generation-skill`), the script is located at `~/.agent/skills/image-generation-skill/scripts/generate_image.py`.
+Locate the script `generate_image.py` within this skill's `scripts` directory. Always use the **absolute path** to the script when invoking from your workspace. For example, if this skill is installed globally, the script is located at `~/.agent/skills/nano-banana-2-image-generation/scripts/generate_image.py`.
 
 ```bash
-python "C:\Users\VISHWA\.agent\skills\image-generation-skill\scripts\generate_image.py" "ENHANCED_PROMPT" "RAW_USER_INPUT" "Fantasy Art" "1:1" "1K"
+# Basic usage
+python "C:\Users\VISHWA\.agent\skills\nano-banana-2-image-generation\scripts\generate_image.py" "ENHANCED_PROMPT" "RAW_USER_INPUT" "Fantasy Art" "1:1" "1K"
+
+# With image-to-image / multi-image references (Append up to 14 absolute paths at the end)
+python "C:\Users\VISHWA\.agent\skills\nano-banana-2-image-generation\scripts\generate_image.py" "ENHANCED_PROMPT" "RAW_USER_INPUT" "Fantasy Art" "1:1" "1K" "C:\absolute\path\to\ref1.jpg" "C:\absolute\path\to\ref2.png"
 ```
 
 *(Note: The script outputs to `output/images/` and `output/prompts/` relative to your **current working directory**, which is exactly what we want).*
