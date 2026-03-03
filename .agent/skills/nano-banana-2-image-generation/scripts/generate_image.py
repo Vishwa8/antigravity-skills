@@ -66,9 +66,6 @@ config = types.GenerateContentConfig(
         image_size=image_size,
         output_mime_type="image/png",
     ),
-    thinking_config=types.ThinkingConfig(
-        thinking_level="HIGH",
-    ),
 )
 
 parts_list = []
@@ -93,7 +90,7 @@ contents = [
 
 # ─── Generate ─────────────────────────────────────────────────────────────────
 
-print(f"⏳ Generating with {MODEL} (thinking_level=HIGH, this takes ~20-60s)...")
+print(f"⏳ Generating with {MODEL} (Fast mode, no preliminary thinking)...")
 print(f"   Prompt: {prompt_text[:80]}...")
 
 image_index = 1
@@ -126,7 +123,7 @@ for chunk in client.models.generate_content_stream(
                 "parameters": {
                     "temperature":       1,
                     "top_p":             0.95,
-                    "thinking_level":    "HIGH",
+                    "thinking_level":    "OFF",
                     "responseModalities": ["TEXT", "IMAGE"],
                 },
                 "output_file": str(img_file),
